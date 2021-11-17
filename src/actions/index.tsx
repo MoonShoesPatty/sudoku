@@ -25,12 +25,20 @@ export const updateCellValue = (newVal: number, coords: { x: number, y: number }
 	}
 }
 
+// Check whether the puzzle is complete and valid
+export const checkPuzzleComplete = () => {
+	return {
+		type: 'CHECK_PUZZLE_COMPLETE',
+		payload: {}
+	}
+}
+
 // Update a cell value
-export const updateCellFocus = (direction: number, currentCoords: { x: number, y: number }) => {
+export const updateCellFocus = (eventKey: string, currentCoords: { x: number, y: number }) => {
 	return {
 		type: 'UPDATE_CELL_FOCUS',
 		payload: {
-			direction,
+			eventKey,
 			currentCoords
 		}
 	}

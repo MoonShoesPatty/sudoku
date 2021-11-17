@@ -10,14 +10,19 @@ import { setDifficulty } from '../../actions';
 import './Game.scss';
 
 interface Props {
+    isComplete: boolean;
     dispatch: (x: any) => {};
 }
 
-const Game: FC<Props> = ({ dispatch }: { [s: string]: any }) => {
+const Game: FC<Props> = ({ isComplete, dispatch }: { [s: string]: any }) => {
     return (
         <div className='gameWrapper'>
             <button onClick={() => { dispatch(setDifficulty(0)) }}>Back</button>
             <Board/>
+            {
+                isComplete &&
+                <p>YOOOOOOOO</p>
+            }
         </div>
     )
 }
@@ -25,6 +30,7 @@ const Game: FC<Props> = ({ dispatch }: { [s: string]: any }) => {
 const mapStateToProps = (state: any) => {
     return {
         // difficulty: state.gameState.difficulty
+        isComplete: state.board.isComplete
     };
 }
 

@@ -20,12 +20,19 @@
 	font-weight: bold;
 	cursor: pointer;
 
+	&.invalid {
+		color: red;
+	}
+
+	&.disabled {
+		background-color: #DDD;
+		&:focus {
+			background-color: #7AC7E0;
+		}
+	}
 	&:focus {
 		background-color: #8AD8F2;
 		outline: none;
-	}
-	&:disabled {
-		background-color: #DDD;
 	}
 }
 

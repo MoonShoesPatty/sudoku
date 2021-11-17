@@ -3,32 +3,26 @@ import { connect } from 'react-redux';
 import Cell from './Cell';
 
 import './Board.scss';
+import { IBoardState } from '../../reducers/boardStateReducer';
 
-interface Props {
+interface Props extends IBoardState {
     dispatch: (x: any) => {};
-    board: number[][];
-    initialBoard: number[][];
 }
 
-const Board: FC<Props> = ({ board, initialBoard, dispatch }) => {
-    const handleCellChange = useCallback(() => {
-
-    }, []);
-
+const Board: FC<Props> = ({ boardCells, focusedCell, dispatch }) => {
     return (
         <div className='boardWrapper'>
             {
-                board.map((row, yIdx) => {
+                boardCells.map((row, yIdx) => {
                     return (
                         <div className='row' key={yIdx}>
                             {
-                                row.map((cell, xIdx) => {
+                                row.map((data, xIdx) => {
                                     return (
                                         <Cell
                                             dispatch={dispatch}
-                                            value={cell}
-                                            readOnly={initialBoard[yIdx][xIdx] != 0}
-                                            coords={{ x: xIdx, y: yIdx }}
+                                            isFocused={focusedCell != null && focusedCell.x === xIdx && focusedCell.y === yIdx}
+                                            data={data}
                                             key={xIdx + '/' + yIdx}
                                         />
                                     )
@@ -42,10 +36,11 @@ const Board: FC<Props> = ({ board, initialBoard, dispatch }) => {
     )
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: { board: IBoardState }): IBoardState => {
     return {
-        board: state.board.board,
-        initialBoard: state.board.initialBoard
+        boardCells: state.board.boardCells,
+        focusedCell: state.board.focusedCell,
+        isComplete: state.board.isComplete
     };
 }
 
