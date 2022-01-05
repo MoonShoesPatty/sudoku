@@ -6,21 +6,35 @@ export const setDifficulty = (level: number) => {
 	}
 }
 
-// Fetch a board of the appropriate level
-export const getBoard = (difficulty: number) => {
+export const toggleCandidateMode = () => {
 	return {
-		type: 'GET_BOARD',
-		payload: difficulty
+		type: 'TOGGLE_CANDIDATE_MODE',
+		payload: {}
+	}
+}
+
+// Fetch a board of the appropriate level
+export const resetBoard = () => {
+	return {
+		type: 'RESET_BOARD',
+		payload: {}
+	}
+}
+
+// Fetch a board of the appropriate level
+export const solveBoard = () => {
+	return {
+		type: 'SOLVE_BOARD',
+		payload: {}
 	}
 }
 
 // Update a cell value
-export const updateCellValue = (newVal: number, coords: { x: number, y: number }) => {
+export const updateCellValue = (newVal: number) => {
 	return {
 		type: 'UPDATE_CELL_VALUE',
 		payload: {
-			newVal,
-			coords
+			newVal
 		}
 	}
 }
@@ -34,12 +48,12 @@ export const checkPuzzleComplete = () => {
 }
 
 // Update a cell value
-export const updateCellFocus = (eventKey: string, currentCoords: { x: number, y: number }) => {
+export const updateCellFocus = (eventKey: string, coords: { x: number, y: number } | null) => {
 	return {
 		type: 'UPDATE_CELL_FOCUS',
 		payload: {
 			eventKey,
-			currentCoords
+			coords
 		}
 	}
 }

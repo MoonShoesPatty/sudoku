@@ -1,3 +1,5 @@
+@import '../../Vars';
+
 .boardWrapper {
     display: flex;
     flex-direction: column;
@@ -8,46 +10,133 @@
 }
 
 .cell {
-	display: inline-block;
-	height: 50px;
-	width: 50px;
-	text-align: center;
-	font-family: 'IBM Plex Mono', monospace;
-	font-size: 2rem;
-	border: 1px solid #bbb;
+    position: relative;
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2rem;
+    border: 0px solid transparent;
+    border-right: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
     margin: 0;
-	caret-color: transparent;
-	font-weight: bold;
-	cursor: pointer;
+    font-weight: bold;
+    outline: none;
+    cursor: pointer;
 
-	&.invalid {
-		color: red;
-	}
+    &.invalid::after {
+        content: '';
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        background-color: #e60000;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        animation: growScale 0.15s ease-out forwards;
+    }
+    
+    $complete-duration: 0.8s;
+    &.complete::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        animation: completeCell $complete-duration ease-out forwards;
+        animation-delay: inherit;
+        
+        &.disabled::before {
+            animation: completeCellDark $complete-duration ease-out forwards;
+        }
+    }
 
-	&.disabled {
-		background-color: #DDD;
-		&:focus {
-			background-color: #7AC7E0;
-		}
-	}
-	&:focus {
-		background-color: #8AD8F2;
-		outline: none;
-	}
+    &.disabled {
+        background-color: $disabled-cell;
+
+        &.focus {
+            background-color: $disabled-cell-focus-color;
+        }
+    }
+
+    &.focus {
+        background-color: $focus-color;
+    }
+
+    &:hover::before {
+        content: '';
+        background-color: $active-color;
+        opacity: 0.15;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .possibilityRow {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .possibilityCell {
+        font-size: 10px;
+        height: 10px;
+        width: 10px;
+        text-align: center;
+        vertical-align: center;
+        position: relative;
+        top: -2px;
+        color: $dark-mid-gray;
+    }
+}
+
+@keyframes growScale {
+    0% {
+        transform: scale(0.25);
+    }
+    80% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+@keyframes completeCell {
+    0%, 100% {
+        background-color: transparent;
+    }
+    50% {
+        background-color: $focus-color;
+    }
+}
+@keyframes completeCellDark {
+    0%, 100% {
+        background-color: $disabled-cell;
+    }
+    50% {
+        background-color: $disabled-cell-focus-color;
+    }
 }
 
 .row:nth-child(3n) .cell {
-	border-bottom: 2px solid black;
+    border-bottom: 2px solid black;
 }
 
 .row:first-child .cell {
-	border-top: 2px solid black;
+    border-top: 2px solid black;
 }
 
 .cell:nth-child(3n) {
-	border-right: 2px solid black;
+    border-right: 2px solid black;
 }
 
 .cell:first-child {
-	border-left: 2px solid black;	
+    border-left: 2px solid black;
 }

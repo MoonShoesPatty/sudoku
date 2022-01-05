@@ -1,7 +1,12 @@
+import { ContextExclusionPlugin } from 'webpack';
+import { solveBoard } from './solveMethods';
+
 export interface IBoardState {
 	boardCells: ICell[][];
 	focusedCell: ICoords;
 	isComplete: boolean;
+	difficulty: number;
+	candidateMode: boolean;
 }
 
 export interface ICell {
@@ -9,6 +14,7 @@ export interface ICell {
 	initialValue: number;
 	isValid: boolean;
 	coords: ICoords;
+	possibilities: number[];
 }
 
 export interface ICoords {
@@ -17,27 +23,20 @@ export interface ICoords {
 }
 
 const initialState: IBoardState = {
+	candidateMode: false,
 	boardCells: [[]],
-	focusedCell: null,
-	isComplete: false
+	focusedCell: { x: 0, y: 0 },
+	isComplete: false,
+	difficulty: 0
 };
 
 export default (state = initialState, action: { type: string, payload: any }): IBoardState => {
 	let boardCells: ICell[][];
+	let coords: ICoords;
+	let newVal: number;
 	switch (action.type) {
-		case 'GET_BOARD':
-			// Do this to dereference from initial array
-			// And to decouple initial and playable board
-			const initialBoard: number[][] = [];
-			const playableBoard: number[][] = [];
-			availableBoards[action.payload].forEach((row, rowIdx) => {
-				initialBoard.push([]);
-				playableBoard.push([]);
-				row.forEach((cell) => {
-					initialBoard[rowIdx].push(cell);
-					playableBoard[rowIdx].push(cell);
-				});
-			});
+		case 'SET_DIFFICULTY':
+			let difficulty = action.payload as number;
 			boardCells = availableBoards[action.payload].map((row, yIdx) => {
 				return row.map((value, xIdx) => {
 					return {
@@ -45,27 +44,93 @@ export default (state = initialState, action: { type: string, payload: any }): I
 						initialValue: value,
 						isValid: true,
 						isFocused: false,
-						coords: { x: xIdx, y: yIdx }
+						coords: { x: xIdx, y: yIdx },
+						possibilities: []
 					} as ICell;
 				});
 			});
 			return {
-				...state,
-				focusedCell: { x: 0, y: 0 },
+				...initialState,
+				difficulty: difficulty,
 				boardCells: [...boardCells]
 			}
+		case 'RESET_BOARD':
+			boardCells = state.boardCells.map((row) => {
+				return row.map((cell) => {
+					return {
+						...cell,
+						value: cell.initialValue,
+						isValid: true,
+						possibilities: []
+					};
+				});
+			});
+			return {
+				...initialState,
+				difficulty: difficulty,
+				boardCells: [...boardCells],
+			}
+		case 'SOLVE_BOARD':
+			boardCells = solveBoard(state.boardCells);
+			boardCells = validateBoard(state.boardCells);
+			let isSolved = checkPuzzleComplete(boardCells);
+			return {
+				...state,
+				boardCells: [...boardCells],
+				isComplete: isSolved,
+				focusedCell: null
+			}
 		case 'UPDATE_CELL_VALUE':
-			const { coords, newVal } = action.payload;
 			boardCells = state.boardCells;
-			boardCells[coords.y][coords.x].value = newVal;
-			boardCells[coords.y][coords.x].isValid = checkValidInput(coords, newVal, boardCells);
+			coords = state.focusedCell;
+			newVal = action.payload.newVal;
+			
+			if (state.isComplete ||
+				state.difficulty === 0 ||
+				state.boardCells[coords.y][coords.x].initialValue !== 0) {
+				return {
+					...state
+				}
+			}
+			// Set candidates vs. actual value
+			if (state.candidateMode) {
+				// Save whether a value existed in the cell so we can 
+				//  a. Set to 0 and validate
+				//  b. Know whether to remove a number from the possibilities array, which,
+				//     if the cell DID have a value, was hidden. So keep the input number
+				//     in the possiblities regardless.
+				let hadValue: boolean = (boardCells[coords.y][coords.x].value !== 0);
+				let itemIdx: number = boardCells[coords.y][coords.x].possibilities.indexOf(newVal);
+				if (itemIdx === -1) {
+					boardCells[coords.y][coords.x].possibilities.push(newVal);
+				} else if (!hadValue) {
+					boardCells[coords.y][coords.x].possibilities.splice(itemIdx, 1);
+				}
+				// Set cell value to 0 so that setting a possibility on a filled cell
+				// clears that cell and shows the possibilities
+				if (hadValue) {
+					boardCells[coords.y][coords.x].value = 0;
+					boardCells = validateBoard(state.boardCells);
+				}
+			} else {
+				boardCells[coords.y][coords.x].value = newVal;
+				boardCells = validateBoard(state.boardCells);
+			}
 			return {
 				...state,
 				boardCells: [...boardCells]
 			}
 		case 'UPDATE_CELL_FOCUS':
-			const nextCoords = moveCell(state.boardCells,
-				action.payload.eventKey, action.payload.currentCoords);
+			let nextCoords: ICoords;
+			if (action.payload.coords != null) {
+				nextCoords = action.payload.coords;
+			} else {
+				nextCoords = moveCell(
+					state.boardCells,
+					action.payload.eventKey,
+					state.focusedCell
+				);
+			}
 			return {
 				...state,
 				focusedCell: nextCoords
@@ -76,14 +141,29 @@ export default (state = initialState, action: { type: string, payload: any }): I
 				...state,
 				isComplete
 			}
+		case 'TOGGLE_CANDIDATE_MODE':
+			return {
+				...state,
+				candidateMode: !state.candidateMode
+			}
 		default:
 			return state;
 	}
 }
 
+/**
+ * Calculate the next cell based on current position, boundaries, and input eventKey
+ * @param boardCells 
+ * @param eventKey 
+ * @param currentCoords 
+ * @returns 
+ */
 const moveCell = (boardCells: ICell[][],
 	eventKey: string,
 	currentCoords: { x: number, y: number }): ICoords => {
+	if (currentCoords == null) {
+		return initialState.focusedCell;
+	}
 	const nextCoords = { ...currentCoords };
 	switch (eventKey) {
 		// LEFT
@@ -124,6 +204,14 @@ const moveCell = (boardCells: ICell[][],
 	return currentCoords;
 };
 
+/**
+ * @deprecated Calculate the next cell based on current position, boundaries, and input eventKey
+ * 			   ** Skipping disabled cells which contained an initial value
+ * @param boardCells 
+ * @param eventKey 
+ * @param currentCoords 
+ * @returns 
+ */
 const moveCellSkippingDisabled = (boardCells: ICell[][],
 	eventKey: string,
 	currentCoords: { x: number, y: number }): ICoords => {
@@ -177,54 +265,69 @@ const moveCellSkippingDisabled = (boardCells: ICell[][],
 };
 
 /**
+ * Update the valid property on every cell
+ * @param boardCells 
+ * @returns boardCells back with isValid appropriately set on all cells
+ */
+const validateBoard = (boardCells: ICell[][]): ICell[][] => {
+	for (let i = 0; i < boardCells.length; i++) {
+		for (let j = 0; j < boardCells.length; j++) {
+			if (boardCells[i][j].value !== 0) {
+				boardCells[i][j].isValid = checkValidInput(
+					boardCells[i][j].coords,
+					boardCells[i][j].value,
+					boardCells
+				);
+			} else {
+				boardCells[i][j].isValid = true;
+			}
+		}
+	}
+	return boardCells;
+}
+
+/**
+ * Check that a given input to a cell is valid
  * 
  * @param coords 
  * @param input 
  * @param boardToCheck 
- * @returns {[]ICoords} List of cells conflicting with current input (including current input)
+ * @returns {boolean} is valid
  */
-const checkValidInput = (coords: ICoords, input: number, boardToCheck: ICell[][]): boolean/*ICoords[]*/ => {
-	// const invalidCoords: ICoords[] = [];
+const checkValidInput = (coords: ICoords, input: number, boardToCheck: ICell[][]): boolean => {
 	// Check row
-	for (var i = 0; i < boardToCheck[coords.x].length; i++) {
+	for (let i = 0; i < boardToCheck[coords.x].length; i++) {
 		if (boardToCheck[i][coords.x].value === input) {
 			// Skip self
 			if (i !== coords.y) {
 				return false;
-				// invalidCoords.push({ x: coords.x, y: i });
 			}
 		}
 	}
 	// Check coords.y
-	for (var i = 0; i < boardToCheck[coords.y].length; i++) {
+	for (let i = 0; i < boardToCheck[coords.y].length; i++) {
 		if (boardToCheck[coords.y][i].value === input) {
 			// Skip self
 			if (i !== coords.x) {
 				return false;
-				// invalidCoords.push({ x: i, y: coords.y });
 			}
 		}
 	}
 	// Box offset used for checking
-	var boxAcross = Math.floor(coords.x / 3) * 3;
-	var boxDown = Math.floor(coords.y / 3) * 3;
+	let boxAcross = Math.floor(coords.x / 3) * 3;
+	let boxDown = Math.floor(coords.y / 3) * 3;
 	// Check box
-	for (var i = 0 + boxAcross; i < 3 + boxAcross; i++) {
-		for (var j = 0 + boxDown; j < 3 + boxDown; j++) {
+	for (let i = 0 + boxAcross; i < 3 + boxAcross; i++) {
+		for (let j = 0 + boxDown; j < 3 + boxDown; j++) {
 			if (boardToCheck[j][i].value === input) {
 				// Skip self
 				if (i !== coords.x && j !== coords.y) {
 					return false;
-					// invalidCoords.push({ x: i, y: j });
 				}
 			}
 		}
 	}
 	return true;
-	// if (invalidCoords.length > 0) {
-	// 	invalidCoords.push(coords);
-	// }
-	// return invalidCoords;
 };
 
 /**
@@ -234,8 +337,8 @@ const checkValidInput = (coords: ICoords, input: number, boardToCheck: ICell[][]
  * @returns true if board is entriely filled out and valid
  */
 const checkPuzzleComplete = (board: ICell[][]): boolean => {
-	for (var i = 0; i < board.length; i++) {
-		for (var j = 0; j < board[i].length; j++) {
+	for (let i = 0; i < board.length; i++) {
+		for (let j = 0; j < board[i].length; j++) {
 			if (board[i][j].value === 0 || board[i][j].isValid === false) {
 				return false;
 			}
@@ -245,6 +348,17 @@ const checkPuzzleComplete = (board: ICell[][]): boolean => {
 };
 
 const availableBoards: { [n: number]: number[][] } = {
+	0: [
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+	],
 	1: [
 		[5, 3, 0, 0, 7, 0, 0, 0, 0],
 		[6, 0, 0, 1, 9, 5, 0, 0, 0],

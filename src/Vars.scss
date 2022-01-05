@@ -1,0 +1,69 @@
+$focus-color: #8AD8F2;
+$focus-dark: #006688;
+$disabled-cell: rgba(0,0,0,0.1);
+$disabled-cell-focus-color: #7AC7E0;
+$active-color: #13b5eb;
+
+$almost-white: #FFF;
+$very-light-gray: #D9D9D9;
+$light-gray: #CCCCCC;
+$light-mid-gray: #999999;
+$mid-gray: #474747;
+$dark-mid-gray: #2C2C2C;
+$almost-black: #131313;
+
+$shadow-color: rgba(0,0,0,0.5);
+
+@mixin button-main($width) {
+    height: 40px;
+    font-variant: small-caps;
+    font-size: 20px;
+    letter-spacing: 2px;
+    width: $width;
+}
+
+@mixin button-secondary($width) {
+    height: 30px;
+    font-variant: small-caps;
+    font-size: 16px;
+    letter-spacing: 1px;
+    width: $width;
+    
+    &:hover,
+    &:focus {
+        background-color: $focus-color;
+        border: 1px solid $almost-black;
+        outline: none;
+    }
+    
+    &:active {
+        background-color: $active-color;
+        border: 2px solid $almost-black;
+        transition: none;
+        top: 1px;
+        left: 1px;
+    }
+}
+
+@mixin button-slide($width) {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    transition: all 0.25s ease-out;
+    background-color: white;
+    color: $almost-black;
+    position: relative;
+
+    &:hover,
+    &:focus {
+        box-shadow: inset $width 0 0 0 $focus-color;
+        border: 1px solid $almost-black;
+        outline: none;
+    }
+    
+    &:active {
+        box-shadow: inset $width 0 0 0 $active-color;
+        border: 2px solid $almost-black;
+        transition: none;
+        top: 1px;
+        left: 1px;
+    }
+}

@@ -9,7 +9,8 @@ interface Props extends IBoardState {
     dispatch: (x: any) => {};
 }
 
-const Board: FC<Props> = ({ boardCells, focusedCell, dispatch }) => {
+const Board: FC<Props> = ({ boardCells, focusedCell, isComplete, dispatch }) => {
+    console.log(focusedCell);
     return (
         <div className='boardWrapper'>
             {
@@ -21,6 +22,7 @@ const Board: FC<Props> = ({ boardCells, focusedCell, dispatch }) => {
                                     return (
                                         <Cell
                                             dispatch={dispatch}
+                                            isComplete={isComplete}
                                             isFocused={focusedCell != null && focusedCell.x === xIdx && focusedCell.y === yIdx}
                                             data={data}
                                             key={xIdx + '/' + yIdx}
@@ -38,9 +40,7 @@ const Board: FC<Props> = ({ boardCells, focusedCell, dispatch }) => {
 
 const mapStateToProps = (state: { board: IBoardState }): IBoardState => {
     return {
-        boardCells: state.board.boardCells,
-        focusedCell: state.board.focusedCell,
-        isComplete: state.board.isComplete
+        ...state.board
     };
 }
 

@@ -1,10 +1,79 @@
+@import '../../Vars';
+
 .splashWrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    position: relative;
 
-h1 {
-    margin: 0;
-    text-align: center;
+    .titleWrapper {
+        position: relative;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10vh;
+
+        .titleDecal {
+            position: absolute;
+            height: 125px;
+            width: 125px;
+            border: 1px solid black;
+            transform: rotate(25deg);
+            opacity: 0.3;
+        }
+    }
+
+    h1 {
+        margin: 0;
+        text-align: center;
+        letter-spacing: 5px;
+        font-variant: small-caps;
+        font-size: 60px;
+        color: $almost-black;
+    }
+
+    button {
+        @include button-main(175px);
+        @include button-slide(175px);
+        margin-bottom: 20px;
+        width: 175px;
+    }
+
+    .splashDecal,
+    .splashDecal::after,
+    .splashDecal::before {
+        position: absolute;
+        height: 1px;
+        opacity: 0.6;
+    }
+    .splashDecal {
+        display: flex;
+        justify-content: center;
+        align-self: center;
+        width: 80%;
+        background-color: $light-gray;
+        
+        $decal-distance: 30px;
+        &::after, &::before {
+            background-color: $very-light-gray;
+            content: '';
+            width: 50%;
+        }
+        &::after {
+            top: calc(#{$decal-distance} / 2);
+        }
+        &::before {
+            bottom: calc(#{$decal-distance} / 2);
+        }
+        &.top {
+            top: $decal-distance;
+        }
+        &.bottom {
+            bottom: $decal-distance;
+        }
+    }
 }

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useRef } from 'react';
+import React, { FC, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { updateCellValue, updateCellFocus, checkPuzzleComplete } from '../../actions';
 import { ICell } from '../../reducers/boardStateReducer';
 
@@ -7,78 +7,61 @@ import './Board.scss';
 interface Props {
     data: ICell;
     isFocused: boolean;
+    isComplete: boolean;
     dispatch: (x: any) => {};
 }
 
-const Cell: FC<Props> = ({ data, isFocused, dispatch }) => {
+const Cell: FC<Props> = ({ data, isFocused, isComplete, dispatch }) => {
     const cellRef = useRef(null);
-
-    // Do nothing, satisfies react's need for an onchange handler
-    const handleChange = useCallback((_: React.ChangeEvent<HTMLInputElement>) => { }, []);
-
-    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-        switch (e.key) {
-            // If any number key, update cell
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9': {
-                if (data.initialValue === 0) {
-                    const newVal = parseInt(e.key);
-                    dispatch(updateCellValue(newVal, data.coords));
-                    dispatch(checkPuzzleComplete());
-                }
-                break;
-            }
-            // If backspace or delete, clear cell
-            case 'Backspace':
-            case 'Delete': {
-                dispatch(updateCellValue(0, data.coords));
-                break;
-            }
-            case 'Enter': {
-                break;
-            }
-            // If any of the arrow keys, try to navigate
-            case 'ArrowUp':
-            case 'ArrowDown':
-            case 'ArrowRight':
-            case 'ArrowLeft': {
-                dispatch(updateCellFocus(e.key, data.coords));
-                break;
-            }
-        }
-    }, [data.coords]);
 
     useEffect(() => {
         if (isFocused)
+            // TODO: Is this an accessibility problem?
             cellRef.current.focus();
-    }, [isFocused]);
-
-    const handleFocus = useCallback(() => {
-        cellRef.current.setSelectionRange(1, 1);
-        if (!isFocused)
-            dispatch(updateCellFocus(null, data.coords));
     }, [isFocused, cellRef]);
 
+    const handleFocus = useCallback(() => {
+        if (!isFocused)
+            dispatch(updateCellFocus(null, data.coords));
+    }, [isFocused, data.coords]);
+
+    const buildPossibilities = useCallback((): ReactNode => {
+        const allCells = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+        return allCells.map((row, idx) => {
+            return <div key={idx} className='possibilityRow'>{
+                row.map((val) => {
+                    return <div key={val} className='possibilityCell'>{
+                        data.possibilities.indexOf(val) === -1 ? '' : val
+                    }</div>
+                })
+            }</div>
+        });
+    }, [data.possibilities]);
+
+    const delay: number = useMemo(() => {
+        const xDelay: number = 0.15;
+        return (data.coords.x + data.coords.y) * xDelay;
+    }, [data.coords]);
+
     return (
-        <input
+        <div
             ref={cellRef}
+            style={{ animationDelay: delay + 's' }}
             className={'cell' +
+                (isFocused ? ' focus' : '') +
+                (isComplete ? ' complete' : '') +
                 (data.isValid ? '' : ' invalid') +
                 (data.initialValue === 0 ? '' : ' disabled')}
-            // disabled={data.initialValue !== 0}
-            // readOnly
-            value={data.value === 0 ? '' : data.value}
             onFocus={handleFocus}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-        />
+            // onKeyDown={handleKeyDown}
+            tabIndex={0}
+        >
+            {data.value === 0 ?
+                data.possibilities.length === 0 ?
+                    ''
+                    : buildPossibilities()
+                : data.value}
+        </div>
     )
 }
 
