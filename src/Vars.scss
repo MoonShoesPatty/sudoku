@@ -1,3 +1,4 @@
+// Colors
 $focus-color: #8AD8F2;
 $focus-dark: #006688;
 $disabled-cell: rgba(0,0,0,0.1);
@@ -13,6 +14,14 @@ $dark-mid-gray: #2C2C2C;
 $almost-black: #131313;
 
 $shadow-color: rgba(0,0,0,0.5);
+
+// Sizes
+$cell-max-size: 50px;
+$cell-size: 10vw;
+$cell-font-size: 2rem;
+$cell-adjustable-font-size: calc(5vw + 0.4rem);
+$invalid-dot-max-size: 10px;
+$invalid-dot-size: 2vw;
 
 @mixin button-main($width) {
     height: 40px;

@@ -6,7 +6,7 @@
     padding: 30px;
     height: 100vh;
 
-    button {
+    .buttonSecondary {
         @include button-secondary(100px);
     }
 
@@ -17,6 +17,7 @@
     .gameSubSection {
         margin-top: 25px;
         display: flex;
+        flex-direction: column;
         justify-content: space-around;
         align-items: center;
     }

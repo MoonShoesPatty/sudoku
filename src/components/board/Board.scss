@@ -12,31 +12,39 @@
 .cell {
     position: relative;
     display: inline-block;
-    height: 50px;
-    width: 50px;
+    height: $cell-size;
+    width: $cell-size;
+    max-height: $cell-max-size;
+    max-width: $cell-max-size;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 2rem;
+    font-size: $cell-font-size;
+    font-weight: bold;
     border: 0px solid transparent;
     border-right: 1px solid #bbb;
     border-bottom: 1px solid #bbb;
     margin: 0;
-    font-weight: bold;
     outline: none;
     cursor: pointer;
 
+    @media (max-width: 500px) {
+        font-size: $cell-adjustable-font-size;
+    }
+
     &.invalid::after {
         content: '';
-        height: 10px;
-        width: 10px;
+        max-height: $invalid-dot-max-size;
+        max-width: $invalid-dot-max-size;
+        height: $invalid-dot-size;
+        width: $invalid-dot-size;
+        top: 4px;
+        right: 4px;
         border-radius: 50%;
         background-color: #e60000;
         position: absolute;
-        top: 4px;
-        right: 4px;
         animation: growScale 0.15s ease-out forwards;
     }
     

@@ -84,13 +84,11 @@ export default (state = initialState, action: { type: string, payload: any }): I
 			boardCells = state.boardCells;
 			coords = state.focusedCell;
 			newVal = action.payload.newVal;
-			
+
 			if (state.isComplete ||
 				state.difficulty === 0 ||
 				state.boardCells[coords.y][coords.x].initialValue !== 0) {
-				return {
-					...state
-				}
+				return state;
 			}
 			// Set candidates vs. actual value
 			if (state.candidateMode) {

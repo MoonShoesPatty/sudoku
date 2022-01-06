@@ -1,0 +1,46 @@
+@import '../../Vars';
+
+.inputNumbersWrapper {
+    $outer-border: 2px solid black;
+    $inner-border: 1px solid black;
+    display: flex;
+
+    .inputNumber {
+        position: relative;
+        display: inline-block;
+        height: $cell-size;
+        width: $cell-size;
+        max-height: $cell-max-size;
+        max-width: $cell-max-size;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        font-size: $cell-font-size;
+        font-family: 'IBM Plex Mono', monospace;
+        font-weight: bold;
+        border: $outer-border;
+        border-left: none;
+        border-right: $inner-border;
+        
+        @media (max-width: 500px) {
+            font-size: $cell-adjustable-font-size;
+        }
+
+        &:hover, &:focus {
+            background-color: $focus-color;
+            outline: none;
+        }
+
+        &:active {
+            background-color: $active-color;
+        }
+    }
+    
+    .inputNumber:first-child {
+        border-left: $outer-border;
+    }
+    .inputNumber:last-child {
+        border-right: $outer-border;
+    }
+}
