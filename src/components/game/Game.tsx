@@ -24,6 +24,7 @@ const Game: FC<Props> = ({ isComplete, candidateMode, dispatch }) => {
             </div>
             <Board />
             <div className='gameSubSection'>
+                <div className='boardSpacer'></div>
                 {
                     isComplete ?
                         <Fragment>
@@ -35,9 +36,11 @@ const Game: FC<Props> = ({ isComplete, candidateMode, dispatch }) => {
                         <Fragment>
                             <InputNumbers />
                             <div className='buttonsWrapper'>
-                                <button className='buttonSecondary' onClick={() => { dispatch(resetBoard()) }}>Reset</button>
-                                <button className='buttonSecondary' onClick={() => { dispatch(solveBoard()) }}>Solve</button>
-                                <input
+                                <button className='buttonSecondary'
+                                    onClick={() => { dispatch(resetBoard()) }}>Reset</button>
+                                <button className='buttonSecondary'
+                                    onClick={() => { dispatch(solveBoard()) }}>Solve</button>
+                                {/* <input
                                     id='candidateMode'
                                     type='checkbox'
                                     checked={candidateMode}
@@ -47,7 +50,15 @@ const Game: FC<Props> = ({ isComplete, candidateMode, dispatch }) => {
                                     htmlFor='candidateMode'
                                     className='candidateModeLabel'
                                     tabIndex={0}
-                                />
+                                /> */}
+                                <button
+                                    className={'buttonSecondary candidateModeButton ' + (candidateMode ? 'on' : 'off')}
+                                    onClick={() => { dispatch(toggleCandidateMode()) }}>
+                                    Candidates
+                                    <div>
+                                        {(candidateMode ? 'on' : 'off')}
+                                    </div>
+                                </button>
                             </div>
                         </Fragment>
                 }

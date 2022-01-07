@@ -10,7 +10,6 @@ interface Props extends IBoardState {
 }
 
 const Board: FC<Props> = ({ boardCells, focusedCell, isComplete, dispatch }) => {
-    console.log(focusedCell);
     return (
         <div className='boardWrapper'>
             {

@@ -26,7 +26,6 @@ const App: FC<Props> = ({ difficulty, dispatch }) => {
 
     useEffect(() => {
         document.addEventListener('keydown', (e: KeyboardEvent) => {
-            console.log("Press: " + e.key);
             switch (e.key) {
                 // If any number key, update cell
                 case '1':

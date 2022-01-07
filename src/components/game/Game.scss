@@ -1,28 +1,101 @@
 @import '../../Vars';
 
 .gameWrapper {
+    $around-board-margin: 15px;
     display: flex;
     flex-direction: column;
-    padding: 30px;
-    height: 100vh;
+    padding: 20px;
+    min-height: 100vh;
 
     .buttonSecondary {
         @include button-secondary(100px);
+        margin-right: 7px;
+    }
+    .buttonSecondary:last-child {
+        margin: 0;
     }
 
     .gameTopSection {
-        margin-bottom: 25px;
+        margin-bottom: $around-board-margin;
     }
     
     .gameSubSection {
-        margin-top: 25px;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
         align-items: center;
+
+        .buttonsWrapper {
+            display: flex;
+            justify-content: center;
+            max-width: 90vw;
+
+            .candidateModeButton {
+                display: flex;
+                min-width: 142px;
+                justify-content: space-between;
+                align-items: center;
+                letter-spacing: 0;
+                padding: 0;
+                padding-left: 6px;
+                border-radius: 0;
+                
+                div {
+                    position: relative;
+                    right: -1px;
+                    min-width: 40px;
+                    height: 28px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-right: 1px solid $light-mid-gray;
+                }
+
+                &.off > div {
+                    background-color: $almost-white;
+                    color: $almost-black;
+                }
+                &.on > div {
+                    background-color: $almost-black;
+                    color: $almost-white;
+                }
+                
+                &:hover,
+                &:focus {
+                    div {
+                        border-right: 1px solid $almost-black;
+                    }
+                    // &.off > div {
+                    //     background-color: $very-light-gray;
+                    // }
+                    // &.on > div {
+                    //     background-color: $dark-mid-gray;
+                    // }
+                }
+                
+                &:active {
+                    top: 0;
+                    left: 0;
+                    border: 1px solid $almost-black;
+                }
+            }
+        }
+
+        .boardSpacer {
+            height: 1px;
+            width: 90%;
+            max-width: 70vw;
+            background-color: $light-gray;
+            margin-top: 15px;
+        }
     }
 
-    // Radio Button
+    .inputNumbersWrapper,
+    .buttonsWrapper {
+        margin-top: $around-board-margin;
+    }
+
+    // Checkbox switch
     input[type='checkbox'] {
         width: 0;
         height: 0;

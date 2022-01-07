@@ -94,14 +94,21 @@
     }
 
     .possibilityCell {
-        font-size: 10px;
+        font-size: 12px;
         height: 10px;
         width: 10px;
         text-align: center;
         vertical-align: center;
         position: relative;
-        top: -2px;
+        top: -3px;
         color: $dark-mid-gray;
+        
+        @media (max-width: $board-max-size-break) {
+            font-size: $cell-possibility-font-size;
+            height: 2vw;
+            width: 2vw;
+            top: -0.75vw;
+        };
     }
 }
 

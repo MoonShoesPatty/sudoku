@@ -2,7 +2,7 @@
 
 .inputNumbersWrapper {
     $outer-border: 2px solid black;
-    $inner-border: 1px solid black;
+    $inner-border: 1px solid $light-mid-gray;
     display: flex;
 
     .inputNumber {
@@ -14,7 +14,7 @@
         max-width: $cell-max-size;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: center;
         align-items: center;
         font-size: $cell-font-size;
         font-family: 'IBM Plex Mono', monospace;
@@ -23,8 +23,34 @@
         border-left: none;
         border-right: $inner-border;
         
-        @media (max-width: 500px) {
+        @media (max-width: $board-max-size-break) {
             font-size: $cell-adjustable-font-size;
+        }
+        
+        .possibilityRow {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .possibilityCell {
+            position: relative;
+            top: -5px;
+            font-size: 14px;
+            height: 12px;
+            width: 10px;
+            text-align: center;
+            vertical-align: center;
+            position: relative;
+            top: -2px;
+            color: $dark-mid-gray;
+
+            @media (max-width: $board-max-size-break) {
+                font-size: calc(2vw + 0.2rem);
+                height: 2vw;
+                width: 2vw;
+                top: -1vw;
+            };
         }
 
         &:hover, &:focus {
