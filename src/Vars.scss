@@ -16,6 +16,7 @@ $almost-black: #131313;
 $shadow-color: rgba(0,0,0,0.5);
 
 // Sizes
+// Cells
 $cell-max-size: 50px;
 $cell-size: 10vw;
 $cell-font-size: 2rem;
@@ -23,6 +24,8 @@ $cell-adjustable-font-size: calc(5vw + 0.4rem);
 $cell-possibility-font-size: calc(1.7vw + 0.2rem);
 $invalid-dot-max-size: 10px;
 $invalid-dot-size: 2vw;
+// Game Section
+$secondary-button-size: 30px;
 
 // Break Point
 $board-max-size-break: 500px;
@@ -38,7 +41,7 @@ $board-max-size-break: 500px;
 }
 
 @mixin button-secondary($width) {
-    height: 30px;
+    height: $secondary-button-size;
     font-variant: small-caps;
     font-size: 16px;
     letter-spacing: 1px;
