@@ -1,0 +1,58 @@
+@import '../../Vars';
+
+$difficulty-padding: 10px;
+
+.difficultyIndicator {
+    height: $secondary-button-size;
+    border: 1px solid $light-mid-gray;
+    display: flex;
+    align-items: center;
+    padding: calc(#{$difficulty-padding} / 2) $difficulty-padding;
+    border-radius: 2px;
+
+    .indicator {
+        // width: 18px;
+        // height: 18px;
+        // border-width: 3px;
+        width: 12px;
+        height: 12px;
+        border-width: 2px;
+        border-radius: 2px;
+        border-style: solid;
+        transform: rotate(45deg) scale(0.8);
+
+        &.easy {
+            background-color: rgb(13, 194, 58);
+            border-bottom-color: rgb(65, 223, 104);
+            border-left-color: rgb(112, 252, 147);
+            border-right-color: rgb(5, 170, 46);
+            border-top-color: rgb(8, 182, 52);
+        }
+        &.medium {
+            background-color: rgb(255, 208, 0);
+            border-bottom-color: rgb(255, 223, 82);
+            border-left-color: rgb(255, 233, 137);
+            border-right-color: rgb(211, 172, 0);
+            border-top-color: rgb(230, 187, 0);
+        }
+        &.hard {
+            background-color: rgb(214, 7, 52);
+            border-bottom-color: rgb(243, 44, 87);
+            border-left-color: rgb(255, 113, 144);
+            border-right-color: rgb(173, 0, 38);
+            border-top-color: rgb(194, 0, 42);
+        }
+    }
+
+    .indicatorLabel {
+        font-family: sans-serif;
+        font-variant: small-caps;
+        font-size: 16px;
+        letter-spacing: 1px;
+        border-radius: 2px;
+        padding-left: $difficulty-padding;
+        vertical-align: center;
+        position: relative;
+        top: 1px;
+    }
+}

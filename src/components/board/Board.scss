@@ -20,7 +20,7 @@
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: $main-font;
     font-size: $cell-font-size;
     font-weight: bold;
     border: 0px solid transparent;

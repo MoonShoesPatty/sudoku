@@ -1,9 +1,10 @@
-import React, { FC, Fragment, useCallback } from 'react';
+import React, { FC, Fragment } from 'react';
 import { connect } from 'react-redux';
 
 // Components
 import Board from '../board/Board';
 import InputNumbers from '../inputNumbers/InputNumbers';
+import DifficultyIndicator from '../difficultyIndicator/DifficultyIndicator';
 
 // Actions
 import { setDifficulty, resetBoard, solveBoard, toggleCandidateMode } from '../../actions';
@@ -21,6 +22,7 @@ const Game: FC<Props> = ({ isComplete, candidateMode, dispatch }) => {
         <div className='gameWrapper'>
             <div className='gameTopSection'>
                 <button className='buttonSecondary' onClick={() => { dispatch(setDifficulty(0)) }}>Back</button>
+                <DifficultyIndicator/>
             </div>
             <Board />
             <div className='gameSubSection'>
